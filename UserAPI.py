@@ -9,6 +9,7 @@ class UserAPI:
 
     requestUrl = 'http://api.obsidianportal.com/v1/users/me.json'
 
+    #assumes the existence of a valid local configuration file
     def __init__(self, config):
         self.config = config
         key=config.get_consumer_key()
