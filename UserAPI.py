@@ -3,6 +3,8 @@ import oauth2 as oauth
 from config import OpPyConfig
 import time
 import json
+from Campaign import Campaign
+from OPOAuthConnection import OPOAuthConnection
 
 #from http://help.obsidianportal.com/kb/api/api-users
 class UserAPI:
@@ -11,39 +13,10 @@ class UserAPI:
 
     #assumes the existence of a valid local configuration file
     def __init__(self, config):
-        self.config = config
-        key=config.get_consumer_key()
-        secret=config.get_consumer_secret()
-        self.consumer = oauth.Consumer( key, secret )
-
-        self.token = oauth.Token( config.get_oauth_token(), config.get_oauth_secret() )
-        self.client = oauth.Client( self.consumer, self.token )
+        self.connection = OPOAuthConnection(config)
 
     def fetch(self):
-
-        #The OAuth Client request works just like httplib2 for the most part.
-        url = UserAPI.requestUrl
-        params = {
-            'oauth_version': "1.0",
-            'oauth_nonce': oauth.generate_nonce(),
-            'oauth_timestamp': int(time.time()),
-        }
-
-        # Set our token/key parameters
-        params['oauth_token'] = self.token.key
-        params['oauth_consumer_key'] = self.consumer.key
-
-        # Create our request. Change method, etc. accordingly.
-        req = oauth.Request(method="GET", url=url, parameters=params)
-        signature_method = oauth.SignatureMethod_HMAC_SHA1()
-
-        #fetch the user info
-        req.sign_request(signature_method, self.consumer, self.token)
-        resp, content = self.client.request( req.to_url() )
-
-        if resp['status'] != '200':
-            raise Exception("Unable to fetch user information, reason: %s." % resp['status'])
-
+        content = self.connection.get( UserAPI.requestUrl )
         self.userinfo = json.loads( content )
 
     #id - identifier - A unique identifier for the given user. This will never change.
@@ -60,9 +33,15 @@ class UserAPI:
     def profile_url(self): return self.userinfo['profile_url']
 
     #campaigns - campaign mini-object An array of the user's campaigns
-    def campaigns(self): return self.userinfo['campaigns']
+    def campaigns(self):
+        ret = []
+        for v in self.userinfo['campaigns']:
+            campaign = Campaign( v )
+            ret.append( campaign )
+        return ret
 
     #is_ascendant - boolean - Indicates if the user is an Ascendant member.
+    #@todo: return a User type
     def is_ascendant(self): return self.userinfo['is_ascendant']
 
     #last_seen_at - timestamp - The last time the user was active on the website. ISO-8601 timestamp.
@@ -84,22 +63,40 @@ class UserAPI:
 
 class TestAPIUsers( unittest.TestCase ):
     def setUp( self ):
-        self.config = OpPyConfig( '') 
+        self.config = OpPyConfig( '' )
         self.userinfo = UserAPI( self.config )
 
     def testFetch(self):
         self.userinfo.fetch()
         self.assertTrue(self.userinfo.updated_at() != None )
+        self.assertTrue( type(self.userinfo.updated_at()).__name__ == 'unicode' )
+
         self.assertTrue(self.userinfo.created_at() != None )
+        self.assertTrue( type(self.userinfo.created_at()).__name__ == 'unicode' )
+
         self.assertTrue(self.userinfo.locale() != None )
+        self.assertTrue( type(self.userinfo.locale()).__name__ == 'unicode' )
+
         self.assertTrue(self.userinfo.utc_offset() != None )
+        self.assertTrue( type(self.userinfo.utc_offset()).__name__ == 'unicode' )
+
         self.assertTrue(self.userinfo.last_seen_at() != None )
+        self.assertTrue( type(self.userinfo.last_seen_at()).__name__ == 'unicode' )
+
         self.assertTrue(self.userinfo.is_ascendant() != None )
+        self.assertTrue( type(self.userinfo.is_ascendant()).__name__ == 'bool' )
+
         self.assertTrue(self.userinfo.campaigns() != None )
+        self.assertTrue( type(self.userinfo.campaigns()).__name__ == 'list' )
+
         self.assertTrue(self.userinfo.profile_url() != None )
+        self.assertTrue( type(self.userinfo.profile_url()).__name__ == 'unicode' )
+
         self.assertTrue(self.userinfo.avatar_image_url() != None )
+        self.assertTrue( type(self.userinfo.avatar_image_url()).__name__ == 'unicode' )
+
         self.assertTrue(self.userinfo.username() != None )
-        self.assertTrue(self.userinfo.id() != None )
+        self.assertTrue( type(self.userinfo.username()).__name__ == 'unicode' )
 
 
 if __name__ == '__main__':
