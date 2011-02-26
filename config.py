@@ -3,12 +3,10 @@ import unittest
 import os
 import shutil
 
-
-
 class OpPyConfig:
 
     #constants
-    cfg               = 'oppy.cfg' #this is the default name of the user configuration file
+
 
     #these are the names of the configuration keys in the config file
     REQUEST_TOKEN_URL_OPTION = "request_token_url"
@@ -28,7 +26,9 @@ class OpPyConfig:
     URL_SECTION       = "URLS"
     SECRET_SECTION    = "SECRET"
 
-    def __init__(self, config_file_name = cfg ):
+    def __init__(self, config_file_name ):
+        if not config_file_name:
+            config_file_name = 'oppy.cfg'
         self.config = ConfigParser.RawConfigParser()
         self.config_file_name = config_file_name
 
@@ -41,20 +41,41 @@ class OpPyConfig:
        self.config.set( OpPyConfig.URL_SECTION, OpPyConfig.REGISTER_URL_OPTION, OpPyConfig.register_url)
 
        self.config.add_section( OpPyConfig.SECRET_SECTION )
-       self.config.set( OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_KEY_OPTION, "YOUR_CONSUMER_KEY");
+       self.config.set( OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_KEY_OPTION, "YOUR_CONSUMER_KEY")
        self.config.set( OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_SECRET_OPTION, "YOUR_CONSUMER_SECRET")
        self.config.set( OpPyConfig.SECRET_SECTION, OpPyConfig.OATH_TOKEN_OPTION, "YOUR_OATH_TOKEN")
        self.config.set( OpPyConfig.SECRET_SECTION, OpPyConfig.OATH_SECRET_OPTION, "YOUR_OATH_SECRET")
 
        self._write()
 
+    def is_default_consumer(self):
+        if cmp(self.get_consumer_key(),'YOUR_CONSUMER_KEY') or cmp(self.get_consumer_secret(),'YOUR_CONSUMER_SECRET'):
+            return 0
+        return 1
+        
+    def get_consumer_key(self):
+        return self.get_configuration( OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_KEY_OPTION )
+
+    def get_consumer_secret(self):
+        return self.get_configuration(OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_SECRET_OPTION )
+    
     def get_configuration(self, section, option):
         self._open()
         return self.config.get( section, option )
 
-    def save_consumer_key(self, consumer_key):
+    def save_oauth_token(self, ouath_token):
+        self.save_key( OpPyConfig.SECRET_SECTION, OpPyConfig.OATH_TOKEN_OPTION, ouath_token )
+
+    def save_oath_token_secret(self, oauth_secret ):
+        self.save_key( OpPyConfig.SECRET_SECTION, OpPyConfig.OATH_SECRET_OPTION, oauth_secret )
+
+
+    def save_consumer_key(self, consumer_key ):
         self.save_key( OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_KEY_OPTION, consumer_key )
 
+    def save_consumer_secret(self, consumer_secret):
+        self.save_key( OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_SECRET_OPTION, consumer_secret )
+        
     def save_key(self, section, option, value ):
         self._open()
         self.config.set( section, option, value )
@@ -73,14 +94,14 @@ class OpPyConfig:
             self.config.write(configfile)
 
 class TestOpPyConfig( unittest.TestCase ):
-    config_test_file = OpPyConfig.cfg + '.test'
+    config_test_file =  'oppy.cfg.test'
     def setUp( self ):
         self.cfg = OpPyConfig( TestOpPyConfig.config_test_file)
         self.cfg.create_default_config()
 
     def testCreateDefault(self):
         self.assertTrue( os.path.exists( self.cfg.config_file_name ) )
-
+        self.assertTrue( self.cfg.is_default_consumer())
         self.assertTrue( self.cfg.config.has_option( OpPyConfig.URL_SECTION, 'request_token_url' ) )
         self.assertTrue( self.cfg.config.has_option( OpPyConfig.SECRET_SECTION, 'consumer_key') )
 
