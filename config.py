@@ -52,12 +52,22 @@ class OpPyConfig:
         if cmp(self.get_consumer_key(),'YOUR_CONSUMER_KEY') or cmp(self.get_consumer_secret(),'YOUR_CONSUMER_SECRET'):
             return 0
         return 1
-        
+
+ 
+    def get_request_token_url(self):
+        return self.get_configuration( OpPyConfig.URL_SECTION, OpPyConfig.REQUEST_TOKEN_URL_OPTION )
+
     def get_consumer_key(self):
         return self.get_configuration( OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_KEY_OPTION )
 
     def get_consumer_secret(self):
         return self.get_configuration(OpPyConfig.SECRET_SECTION, OpPyConfig.CONSUMER_SECRET_OPTION )
+
+    def get_oauth_token(self):
+        return self.get_configuration( OpPyConfig.SECRET_SECTION, OpPyConfig.OATH_TOKEN_OPTION )
+
+    def get_oauth_secret(self):
+        return self.get_configuration(OpPyConfig.SECRET_SECTION, OpPyConfig.OATH_SECRET_OPTION )
     
     def get_configuration(self, section, option):
         self._open()
