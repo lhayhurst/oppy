@@ -4,7 +4,7 @@ from config import OpPyConfig
 from UserAPI import UserAPI
 import time
 import json
-from Campaign import Campaign
+from OPThings import Campaign
 from OPOAuthConnection import OPOAuthConnection
 
 #from http://help.obsidianportal.com/kb/api/api-users
@@ -32,9 +32,9 @@ class TestCampaignAPI( unittest.TestCase ):
 
     def testFetch(self):
         #first use the user info api to grab the campaigns
-        self.user_info.fetch()
-        self.assertTrue(self.user_info.campaigns() != None )
-        campaigns = self.user_info.campaigns()
+        user = self.user_info.get_me()
+        self.assertTrue(user.campaigns() != None )
+        campaigns = user.campaigns()
 
         #then iterate through the campaigns and do some basic sanity checking on 'em
         for campaign in campaigns:

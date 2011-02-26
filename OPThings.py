@@ -1,3 +1,52 @@
+
+
+class User:
+
+    def __init__(self, dictionary={}):
+        self.userinfo = dictionary
+
+    #id - identifier - A unique identifier for the given user. This will never change.
+    def id(self): return self.userinfo['id']
+
+    #username - string - The user's username. Note: The user can change this value.
+    def username(self): return self.userinfo['username']
+
+    #avatar_image_url - string - The URL of the user's avatar image.
+    def avatar_image_url(self): return self.userinfo['avatar_image_url']
+
+
+    #profile_url - string - The URL of the user's profile on Obsidian Portal.
+    def profile_url(self): return self.userinfo['profile_url']
+
+    #campaigns - campaign mini-object An array of the user's campaigns
+    def campaigns(self):
+        ret = []
+        for v in self.userinfo['campaigns']:
+            campaign = Campaign( v )
+            ret.append( campaign )
+        return ret
+
+    #is_ascendant - boolean - Indicates if the user is an Ascendant member.
+    #@todo: return a User type
+    def is_ascendant(self): return self.userinfo['is_ascendant']
+
+    #last_seen_at - timestamp - The last time the user was active on the website. ISO-8601 timestamp.
+    def last_seen_at(self): return self.userinfo['last_seen_at']
+
+    #utc_offset - string - Formatted string representing the user's time zone.
+    # It is formatted as "+HH:MM" and represents the offset from UTC. Example: "-05:00" is Eastern US time.
+    def utc_offset(self): return self.userinfo['utc_offset']
+
+
+    #locale - string - ISO 639-1 language code for the user's preferred language.
+    def locale(self): return self.userinfo['locale']
+
+    #created_at - timestamp - Indicates when the user first created their account. ISO-8601 timestamp.
+    def created_at(self): return self.userinfo['created_at']
+
+    #updated_at - timestamp - Indicates when the user first created their account. ISO-8601 timestamp
+    def updated_at(self): return self.userinfo['updated_at']
+
 class Campaign:
     def __init__(self, dictionary={}):
         self.campaign_info = dictionary
@@ -35,8 +84,11 @@ class Campaign:
 
     def looking_for_players(self): return self.campaign_info['looking_for_players']
 
-    #@todo: returns a User data structure here, not a list of dicts
-    def players(self): return self.campaign_info['players']
+    def players(self):
+        ret = []
+        for v in self.campaign_info['players']:
+            ret.append( User( v ))
+        return ret
 
     #@todo: returns a User data structure here, not a list of dicts
     def fans(self): return self.campaign_info['fans']
