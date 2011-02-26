@@ -12,10 +12,10 @@ It doesn't let you do anything fun with the API.
 GETTING STARTED
 
 
-3) If you don't have it already, install python.  The 3.2 release of python isn't supported by oppy, because the
+1) If you don't have it already, install python.  The 3.2 release of python isn't supported by oppy, because the
 standard python setupconfig module isn't.  :-(  Head over here: http://www.python.org/getit/releases/2.7.1 to get
 the 2.7.1 release of Python.
-3) Oppy uses Joe Stump's python oauth module (https://github.com/simplegeo/python-oauth2).  This module, in turn,
+2) Oppy uses Joe Stump's python oauth module (https://github.com/simplegeo/python-oauth2).  This module, in turn,
 uses the standard setupconfig module.  So you'll need to install both.
     a) Download setuptools into a temporary directory.  I'm using the latest from here:
      http://pypi.python.org/packages/source/s/setuptools/setuptools-0.6c11.tar.gz#md5=7df2a529a074f613b509fb44feefe74e
@@ -33,18 +33,18 @@ uses the standard setupconfig module.  So you'll need to install both.
 
      Installed c:\python27\lib\site-packages\httplib2-0.6.0-py2.7.egg
      Finished processing dependencies for oauth2==1.5.167
-4) Download oppy from here: https://github.com/lhayhurst/oppy/archives/master.  Unpack it to somewhere on your local computer
-5) Run the basic set of unit tests: %python config.py   You should see the following:
+3) Download oppy from here: https://github.com/lhayhurst/oppy/archives/master.  Unpack it to somewhere on your local computer
+4) Run the basic set of unit tests: %python config.py   You should see the following:
 $ python config.py
 ....
 ----------------------------------------------------------------------
 Ran 4 tests in 0.003s
 
 OK
-6) You're now ready to bootstrap oppy.  From the command line do: %python bootstrap.py.  oppy will then walk you through
+5) You're now ready to bootstrap oppy.  From the command line do: %python bootstrap.py.  oppy will then walk you through
 a series of steps to setup your Obsidian Portal oauth consumer tokens and secrets.  You can read a bit more about this
 over at http://help.obsidianportal.com/kb/api/api-authentication-oauth
-7) Wait for me to start adding code that actually lets you use the API :-)
+6) Wait for me to start adding code that actually lets you use the API :-)
 
 
 ABOUT ME
