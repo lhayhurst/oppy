@@ -44,7 +44,8 @@ OK
 5) You're now ready to bootstrap oppy.  From the command line do: %python bootstrap.py.  oppy will then walk you through
 a series of steps to setup your Obsidian Portal oauth consumer tokens and secrets.  You can read a bit more about this
 over at http://help.obsidianportal.com/kb/api/api-authentication-oauth
-6) Wait for me to start adding code that actually lets you use the API :-)
+6) You can start using the API to grab data.  I recommend starting with the unit tests in UserAPI.py and CampaignAPI.py,
+as both show you how to use their respective API by example.
 
 
 ABOUT ME
