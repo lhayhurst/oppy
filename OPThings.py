@@ -69,9 +69,6 @@ class Campaign:
     #visibility - string - The visibility of the campaign. Can be 'public', 'friends', or 'private'
     def visibility(self): return self.campaign_info['visibility']
 
-    #game_master - mini-object - The game master of the campaign
-    def game_master(self): return self.campaign_info['game_master']
-
     #created_at - timestamp - Indicates when the user first created their account. ISO-8601 timestamp.
     def created_at(self): return self.campaign_info['created_at']
 
@@ -84,17 +81,20 @@ class Campaign:
 
     def looking_for_players(self): return self.campaign_info['looking_for_players']
 
-    def players(self):
+    def _convert_to_user(self, key):
         ret = []
-        for v in self.campaign_info['players']:
-            ret.append( User( v ))
+        for v in self.campaign_info[key]:
+            ret.append(User(v))
         return ret
 
-    #@todo: returns a User data structure here, not a list of dicts
-    def fans(self): return self.campaign_info['fans']
+    def players(self):
+        return self._convert_to_user( 'players' )
 
-    #@todo: returns a GameMaster data structure here, not a dicts
-    def game_master(self): return self.campaign_info['game_master']
+    def fans(self):
+        return self._convert_to_user( 'fans' )
+
+    def game_master(self):
+        return User( self.campaign_info[ 'game_master' ] )
 
     #@todo: returns a Location data structure here, not a dicts
     def location(self): return self.campaign_info['location']

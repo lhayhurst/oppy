@@ -65,12 +65,13 @@ class TestCampaignAPI( unittest.TestCase ):
 
             self.assertTrue(  camp.players() != None )
             self.assertTrue( type(camp.players()).__name__ == 'list' )
+            self.assertTrue( type(camp.players()[0]).__name__ == 'instance' )
 
             self.assertTrue(  camp.fans() != None )
             self.assertTrue( type(camp.fans()).__name__ == 'list' )
 
             self.assertTrue(  camp.game_master() != None )
-            self.assertTrue( type(camp.game_master()).__name__ == 'dict' )
+            self.assertTrue( type(camp.game_master()).__name__ == 'instance' )
 
             self.assertTrue(  camp.location() != None )
             self.assertTrue( type(camp.location()).__name__ == 'dict' )
