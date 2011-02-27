@@ -20,20 +20,22 @@ def create_graph( cfg, username ):
 
     graph = yapgvb.Digraph(username)
 
-    walk_user_campaigns(campaignAPI, graph, nodes, edges, user )
+    walk_user_campaigns(userAPI, campaignAPI, graph, nodes, edges, user )
 
     return graph
 
 #this is a recursive function that traverses the user-campaign relationships as deeply as it can
-def walk_user_campaigns(campaignAPI, graph, nodes, edges, user ):
+def walk_user_campaigns(userAPI, campaignAPI, graph, nodes, edges, user ):
     print "navigating user %s" % user.username()
     if user.username() in nodes: #base case
+        print "already seen user %s, skipping" % user.username()
         return
     nodes[user.username()] = graph.add_node( user.username(),
                                              label=user.username(),
                                              fontsize=14, shape= "square",
                                              color=yapgvb.colors.blue )
 
+    print user.username() + " has %s compaigns" % len(user.campaigns())
     for camp in user.campaigns():
         campaign = campaignAPI.fetch(camp.id())
         if campaign.name() in nodes:
@@ -47,10 +49,11 @@ def walk_user_campaigns(campaignAPI, graph, nodes, edges, user ):
         edges[ user.username() + "~" + campaign.name()] = graph.add_edge(nodes[user.username()],
                                                                          nodes[campaign.name()])
         for nuser in campaign.players():
-            walk_user_campaigns( campaignAPI, graph, nodes, edges, nuser )
-            if not nuser.username() + "~" + campaign.name() in edges:
+            fnuser = userAPI.show_by_username( nuser.username())
+            walk_user_campaigns( userAPI, campaignAPI, graph, nodes, edges, fnuser )
+            if not fnuser.username() + "~" + campaign.name() in edges:
                 edges[ nuser.username() + "~" + campaign.name()] = graph.add_edge(nodes[campaign.name()],
-                                                                                  nodes[nuser.username()])
+                                                                                  nodes[fnuser.username()])
             
 
 
