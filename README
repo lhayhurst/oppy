@@ -5,9 +5,11 @@ This project is meant to allow programmers to access the ObsidianPortal API via 
 
 WHAT IT DOES
 
-At present oppy does only one thing: sets up your oauth access to obsidian portal.
+oppy does the following:
 
-It doesn't let you do anything fun with the API.
+1) It has a bootstrap script that will walk you through the creation of your Obsidian Portal OAuth key/secrets.
+2) It can fetch user information me user id or or user name.
+3) It can fetch campaign information by campaign id.
 
 GETTING STARTED
 
