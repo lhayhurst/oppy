@@ -1,4 +1,48 @@
 
+class Character:
+
+    def __init__(self, dictionary= {} ):
+        self.character           = dictionary
+        self.character_campaign  = Campaign( dictionary['campaign'])
+        self.character_author    = User( dictionary['author'] )
+        self.template            = DynamicSheetTemplate( dictionary['dynamic_sheet_template'])
+
+    def campaign(self):
+        return self.campaign
+
+    #this stuff is mostly boilerplate.  @todo: dynamically generate
+
+    def author(self): return self.character_author
+    def campaign(self): return self.character_campaign
+    def dynamic_sheet_template(self): return self.template
+
+
+    def name(self): return self.character['name']
+    def slug(self): return self.character['slug']
+    def id(self): return self.character['id']
+    def is_game_master_only(self): return self.character['is_game_master_only']
+    def is_player_character(self): return self.character['is_player_character']
+    def avatar_url(self): return self.character['avatar_url']
+    def bio(self): return self.character['bio']
+    def bio_html(self): return self.character['bio_html']
+    def created_at(self): return self.character['created_at']
+    def updated_at(self): return self.character['updated_at']
+    def description(self): return self.character['description']
+    def description_html(self): return self.character['description_html']
+    def dynamic_sheet(self): return self.character['dynamic_sheet']
+    def game_master_info(self): return self.character['game_master_info']
+    def game_master_info_html(self): return self.character['game_master_info_html']
+    def created_at(self): return self.character['created_at']
+
+class DynamicSheetTemplate:
+
+    def __init__(self, dictionary = {} ):
+        self.template = dictionary
+
+    def id(self): return self.template['id']
+    def name(self): return self.template['name']
+    def slug(self): return self.template['slug']
+
 
 class User:
 
