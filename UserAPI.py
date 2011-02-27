@@ -8,22 +8,51 @@ from OPThings import User
 #from http://help.obsidianportal.com/kb/api/api-users
 class UserAPI:
 
-    requestUrl = 'http://api.obsidianportal.com/v1/users/me.json'
+    requestUrl = 'http://api.obsidianportal.com/v1/users/'
 
     #assumes the existence of a valid local configuration file
     def __init__(self, config):
         self.connection = OPOAuthConnection(config)
 
     def get_me(self):
-        content = self.connection.get( UserAPI.requestUrl )
+        url = UserAPI.requestUrl + "me.json"
+        content = self.connection.get( url )
         user_info = User(json.loads( content ))
         return user_info
+
+    def show_by_id(self, id):
+        url = UserAPI.requestUrl + id + ".json"
+        content = self.connection.get( url )
+        user_info = User(json.loads( content ))
+        return user_info
+
+    def show_by_username( self, name):
+        url = UserAPI.requestUrl + name + ".json"
+        content = self.connection.get( url, { 'use_username': "true" } )
+        user_info = User(json.loads( content ))
+        return user_info
+        
 
 class TestAPIUsers( unittest.TestCase ):
     def setUp( self ):
         self.config = OpPyConfig( '' )
         self.userinfo = UserAPI( self.config )
 
+    def test_show_by_id(self):
+        dgrooID = '734d28d8f24211dfba8140403656340d'
+        user = self.userinfo.show_by_id( dgrooID ) #this happens to be my pal dgroo
+        self.assertEqual( dgrooID, user.id())
+        self.assertEqual( 'dgroo', user.username() )
+        self.assertEqual( 'http://www.obsidianportal.com/profile/dgroo', user.profile_url())
+
+    def test_show_by_username(self):
+        username = 'dgroo'
+        dgrooID = '734d28d8f24211dfba8140403656340d'
+        user = self.userinfo.show_by_username( username ) #this happens to be my pal dgroo
+        self.assertEqual( dgrooID, user.id())
+        self.assertEqual( username, user.username() )
+        self.assertEqual( 'http://www.obsidianportal.com/profile/dgroo', user.profile_url())
+        
     def test_get_me(self):
         user = self.userinfo.get_me()
         

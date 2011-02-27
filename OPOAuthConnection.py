@@ -13,13 +13,16 @@ class OPOAuthConnection:
         self.token = oauth.Token( config.get_oauth_token(), config.get_oauth_secret() )
         self.client = oauth.Client( self.consumer, self.token )
 
-    def get(self, url):
+    def get(self, url, optional_params = {} ):
 
         params = {
             'oauth_version': "1.0",
             'oauth_nonce': oauth.generate_nonce(),
             'oauth_timestamp': int(time.time()),
         }
+
+        for k,v in optional_params.items():
+            params[ k ] = v
 
         # Set our token/key parameters
         params['oauth_token'] = self.token.key
