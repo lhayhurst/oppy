@@ -37,7 +37,7 @@ def walk_user_campaigns(userAPI, campaignAPI, graph, nodes, edges, user ):
 
     print user.username() + " has %s compaigns" % len(user.campaigns())
     for camp in user.campaigns():
-        campaign = campaignAPI.fetch(camp.id())
+        campaign = campaignAPI.get(camp.id())
         if campaign.name() in nodes:
             continue
         print "navigating campaign %s" %campaign.name()

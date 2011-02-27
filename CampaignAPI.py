@@ -1,15 +1,11 @@
 import unittest
-import oauth2 as oauth
+import json
 from config import OpPyConfig
 from UserAPI import UserAPI
-import time
-import json
 from OPThings import Campaign
 from OPOAuthConnection import OPOAuthConnection
 
 #from http://help.obsidianportal.com/kb/api/api-users
-
-
 class CampaignAPI:
 
     requestUrl = 'http://api.obsidianportal.com/v1/campaigns/'
@@ -18,12 +14,14 @@ class CampaignAPI:
     def __init__(self, config):
         self.connection = OPOAuthConnection(config)
 
-    def fetch(self, campaignID):
+    def get(self, campaignID):
 
         campaign_url = CampaignAPI.requestUrl + campaignID + ".json"
         content = self.connection.get( campaign_url)
         campaign = Campaign( json.loads( content ))
         return campaign
+
+
 
 class TestCampaignAPI( unittest.TestCase ):
     def setUp( self ):
@@ -39,7 +37,7 @@ class TestCampaignAPI( unittest.TestCase ):
         #then iterate through the campaigns and do some basic sanity checking on 'em
         for campaign in campaigns:
             campAPI = CampaignAPI( self.config )
-            camp =  campAPI.fetch( campaign.id())
+            camp =  campAPI.get( campaign.id())
             #capi.print_campaign()
 
             self.assertEqual( campaign.id(), camp.id() )

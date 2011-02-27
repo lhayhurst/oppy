@@ -25,22 +25,68 @@ class CharacterAPI:
              ret.append( Character( c ) )
         return ret
 
+    def show_by_id(self, campaignID, characterID):
+        campaign_url = CampaignAPI.requestUrl + campaignID + "/characters/" + characterID + ".json"
+        content = self.connection.get( campaign_url )
+        character = Character( json.loads( content ))
+        return character
+
+    def show_by_slug(self, campaignID, slug ):
+        campaign_url = CampaignAPI.requestUrl + campaignID + "/characters/" + slug + ".json"
+        content = self.connection.get( campaign_url, {'use_slug': '1'} )
+        character = Character( json.loads( content ))
+        return character
 
 class TestCharacterAPI( unittest.TestCase ):
     def setUp( self ):
         self.config = OpPyConfig( '' )
         self.api = CharacterAPI( self.config )
 
-    def testFetch(self):
+    def test_show_by_id(self):
+
+        oppyCmpnId  = 'af7946b642a111e0bbb240403656340d'
+        characterID = 'e9b9001e42a111e0845c40403656340d'
+        character = self.api.show_by_id( oppyCmpnId, characterID)
+
+        self.character_assertions(character, oppyCmpnId, characterID )
+
+    def test_show_by_slug(self):
+
+        oppyCmpnId  = 'af7946b642a111e0bbb240403656340d'
+        slug        = 'poppy'
+        character = self.api.show_by_slug( oppyCmpnId, slug )
+
+        self.character_assertions( character, oppyCmpnId, 'e9b9001e42a111e0845c40403656340d')
+
+    def test_get(self):
+
         oppyCmpnId = 'af7946b642a111e0bbb240403656340d'
+        characterID = 'e9b9001e42a111e0845c40403656340d'
+
         characters = self.api.get( oppyCmpnId)
         self.assertTrue( characters )
         self.assertTrue( type(characters).__name__ == 'list' )
         self.assertTrue( len(characters) == 1 )
         character = characters[0]
-        self.assertTrue( character )
-        self.assertEqual( "Poppy", character.name())
-        self.assertEqual( "poppy", character.slug())
+        self.character_assertions(character, oppyCmpnId, characterID )
+
+    def character_assertions(self, character, oppyCmpnId, characterID):
+        self.assertTrue(character)
+        self.assertEqual("Poppy", character.name())
+        self.assertEqual("poppy", character.slug())
+        self.assertTrue(character.author())
+        self.assertEqual("sozin", character.author().username())
+        self.assertTrue(character.campaign())
+        self.assertEqual(oppyCmpnId, character.campaign().id())
+        self.assertEqual('e9b9001e42a111e0845c40403656340d', character.id())
+        self.assertFalse(character.is_game_master_only())
+        self.assertTrue(character.is_player_character())
+        self.assertTrue(character.dynamic_sheet_template())
+        self.assertEqual('3b934b1815d111e0ade440403656340d', character.dynamic_sheet_template().id())
+        self.assertEqual('Udalrich\'s Pathfinder DST', character.dynamic_sheet_template().name())
+        self.assertEqual('udalrich_pathfinder', character.dynamic_sheet_template().slug())
+
+
 
 if __name__ == '__main__':
     unittest.main()
