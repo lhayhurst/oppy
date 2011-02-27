@@ -1,5 +1,4 @@
 import unittest 
-import oauth2 as oauth
 from config import OpPyConfig
 import json
 from OPOAuthConnection import OPOAuthConnection

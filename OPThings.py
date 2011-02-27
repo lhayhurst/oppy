@@ -21,9 +21,10 @@ class User:
     #campaigns - campaign mini-object An array of the user's campaigns
     def campaigns(self):
         ret = []
-        for v in self.userinfo['campaigns']:
-            campaign = Campaign( v )
-            ret.append( campaign )
+        if 'campaigns' in self.userinfo:
+            for v in self.userinfo['campaigns']:
+                campaign = Campaign( v )
+                ret.append( campaign )
         return ret
 
     #is_ascendant - boolean - Indicates if the user is an Ascendant member.
