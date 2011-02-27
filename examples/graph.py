@@ -1,15 +1,33 @@
 import yapgvb
 import sys
+import argparse
 sys.path.append( '..')
 from config import OpPyConfig
 from UserAPI import UserAPI
 from CampaignAPI import CampaignAPI
 
-import argparse
 
+
+def create_graph( cfg, username ):
+
+    userAPI = UserAPI( cfg )
+    campaignAPI = CampaignAPI( cfg )
+
+    user = userAPI.show_by_username( username )
+
+    nodes = {}
+    edges = {}
+
+    graph = yapgvb.Digraph(username)
+
+    walk_user_campaigns(campaignAPI, graph, nodes, edges, user )
+
+    return graph
+
+#this is a recursive function that traverses the user-campaign relationships as deeply as it can
 def walk_user_campaigns(campaignAPI, graph, nodes, edges, user ):
     print "navigating user %s" % user.username()
-    if user.username() in nodes:
+    if user.username() in nodes: #base case
         return
     nodes[user.username()] = graph.add_node( user.username(),
                                              label=user.username(),
@@ -34,20 +52,6 @@ def walk_user_campaigns(campaignAPI, graph, nodes, edges, user ):
                 edges[ nuser.username() + "~" + campaign.name()] = graph.add_edge(nodes[campaign.name()],
                                                                                   nodes[nuser.username()])
             
-def create_graph( cfg, username ):
-
-    userAPI = UserAPI( cfg )
-    campaignAPI = CampaignAPI( cfg )
-
-    user = userAPI.show_by_username( username )
-
-    nodes = {}
-    edges = {}
-    graph = yapgvb.Digraph(username)
-    graph.bgcolor = "transparent"
-    walk_user_campaigns(campaignAPI, graph, nodes, edges, user )
-    
-    return graph
 
 
 if __name__ == '__main__':
