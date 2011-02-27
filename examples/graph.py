@@ -66,7 +66,7 @@ if __name__ == '__main__':
     graph = create_graph( cfg, user )
     # render!
     print "Rendering ..."
-    filename = 'opgraph.gif'
+    filename = user + ".gif"
 
     graph.layout(yapgvb.engines.circo )
     graph.render( filename, "gif" )
