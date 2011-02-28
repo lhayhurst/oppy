@@ -10,6 +10,7 @@ oppy does the following:
 1) It has a bootstrap script that will walk you through the creation of your Obsidian Portal OAuth key/secrets.
 2) It can fetch user information me user id or or user name.
 3) It can fetch campaign information by campaign id.
+4) It can fetch character information.
 
 GETTING STARTED
 
