@@ -1,4 +1,9 @@
 
+class Wiki:
+
+    def __init__(self, dictionary = {} ):
+        self.campaign = Campaign( dictionary['campaign'])
+
 class Character:
 
     def __init__(self, dictionary= {} ):
