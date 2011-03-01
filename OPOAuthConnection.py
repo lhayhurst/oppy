@@ -40,10 +40,12 @@ class OPOAuthConnection:
 
         status = resp['status']
         if status != '200':
-            raise Exception("Unable to fetch user information, reason: %s, notes %s: " %( resp['status'],  self.error_codes[status]))
-
+            raise Exception("Unable to fetch information from url %s, reason: %s, notes: %s" %( url,
+                                                                                                 resp['status'],
+                                                                                                 self.error_codes[status]))
         return content
 
+    #a simple structure used to pretty print out the reasons behind the error codes
     def _init_error_codes(self):
         self.error_codes = {
               '200' :	"Success. This is the most common response when everything works normally.",
