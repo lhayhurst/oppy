@@ -6,7 +6,7 @@ from OPOAuthConnection import OPOAuthConnection
 #from http://help.obsidianportal.com/kb/api/api-wiki-pages
 class WikiAPI:
 
-    requestUrl = 'http://api.obsidianportal.com/v1/'
+    requestUrl = 'http://api.obsidianportal.com/v1/campaigns'
 
     #assumes the existence of a valid local configuration file
     def __init__(self, config):
