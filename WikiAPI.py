@@ -1,5 +1,5 @@
 import unittest
-from OPThings import Wiki
+from OPThings import Wiki, WikiPage
 from config import OpPyConfig
 import json
 from OPOAuthConnection import OPOAuthConnection
@@ -20,29 +20,81 @@ class WikiAPI:
         wiki = Wiki(json.loads( content ))
         return wiki
 
+
+    def show_page(self, campaignID, wikiID ):
+        url = WikiAPI.requestUrl + campaignID + "/wikis/" + wikiID + ".json"
+        content = self.connection.get( url, {'campaign_id' : campaignID, 'id' : wikiID } );
+        wikiPage = WikiPage( json.loads( content ))
+        return wikiPage
+
+#    def show_by_slug(self, campaignID, slug ):
+
+
 class TestAPIWiki( unittest.TestCase ):
     def setUp( self ):
         self.config = OpPyConfig( '' )
         self.wiki = WikiAPI( self.config )
+        self.oppyCmpnId = 'af7946b642a111e0bbb240403656340d'
+        self.homepage_id = 'afa0074c42a111e0bbb240403656340d'
+
+    def homepage_asserts(self, homepage):
+        self.assertTrue(homepage.campaign())
+        self.assertTrue( type(homepage.campaign()).__name__ == 'instance' )
+        self.assertEqual(homepage.campaign().id(), self.oppyCmpnId)
+        self.assertEqual('Home Page', homepage.name())
+        self.assertTrue( type(homepage.name()).__name__ == 'unicode' )
+        self.assertEqual(self.homepage_id, homepage.id())
+        self.assertTrue( type(homepage.id()).__name__ == 'unicode' )
+        self.assertEqual('home-page', homepage.slug())
+        self.assertTrue( type(homepage.slug()).__name__ == 'unicode' )
+        self.assertEqual('WikiPage', homepage.page_type())
+        self.assertTrue( type(homepage.page_type()).__name__ == 'unicode' )
+        self.assertFalse( homepage.is_game_master_only() )
+        self.assertTrue( type(homepage.is_game_master_only()).__name__ == 'bool' )
+        self.assertEqual('http://www.obsidianportal.com/campaigns/oppy/wiki_pages/home-page', homepage.wiki_page_url())
+        self.assertTrue( type(homepage.wiki_page_url()).__name__ == 'unicode' )
+        self.assertTrue( homepage.tags())
+        self.assertTrue( type(homepage.tags()).__name__ == 'list' )
+        self.assertEqual( 3, len(homepage.tags()))
+        self.assertEqual( "oppy", homepage.tags()[0])
+        self.assertEqual( "Test", homepage.tags()[1])
+        self.assertEqual( "tags", homepage.tags()[2])
+
+
+    def test_show_page(self ):
+        homepage = self.wiki.show_page( self.oppyCmpnId, self.homepage_id )
+        self.assertTrue( homepage )
+        self.homepage_asserts( homepage )
+        #unlike fetching pages from the top level wiki, when you fetch them by individual page, you should get
+        #real data back for body, body_html, game_master_info, game_master_info_html fields
+        self.assertTrue( homepage.body )
+        self.assertTrue( len(homepage.body()) > 0 )
+        self.assertTrue( homepage.body_html() )
+        self.assertTrue( len(homepage.body_html()) > 0 )
+        self.assertTrue( homepage.game_master_info() )
+        self.assertTrue( len(homepage.game_master_info()) > 0 )
+        self.assertTrue( homepage.game_master_info_html() )
+        self.assertTrue( len(homepage.game_master_info_html()) > 0 )
+
 
     def test_get(self):
-        oppyCmpnId = 'af7946b642a111e0bbb240403656340d'
-        wiki = self.wiki.get( oppyCmpnId )
+        wiki = self.wiki.get( self.oppyCmpnId )
         self.assertTrue( wiki )
         self.assertEqual( 3, len( wiki.pages() ))
         homepage = wiki.pages()[0]
         self.assertTrue( homepage )
-        self.assertTrue( homepage.campaign() )
-        self.assertEqual( homepage.campaign().id(), oppyCmpnId)
-        self.assertEqual( 'Home Page', homepage.name() )
-        self.assertEqual( 'afa0074c42a111e0bbb240403656340d', homepage.id() )
-        self.assertEqual( 'home-page', homepage.slug() )
-        self.assertEqual( 'WikiPage', homepage.page_type() )
-        self.assertEqual( 'http://www.obsidianportal.com/campaigns/oppy/wiki_pages/home-page', homepage.wiki_page_url() )
+        self.homepage_asserts(homepage)
+        #when the page is fetched from the top level, "For bandwidth conservation, the data returned does not
+        #include the the body, body_html, game_master_info, game_master_info_html fields
+        self.assertIsNone( homepage.body())
+        self.assertIsNone( homepage.body_html())
+        self.assertIsNone( homepage.game_master_info())
+        self.assertIsNone( homepage.game_master_info_html())
+
         mainpage = wiki.pages()[1]
         self.assertTrue( mainpage )
         self.assertTrue( mainpage.campaign() )
-        self.assertEqual( mainpage.campaign().id(), oppyCmpnId)
+        self.assertEqual( mainpage.campaign().id(), self.oppyCmpnId)
         self.assertEqual( 'Main Page', mainpage.name() )
         self.assertEqual( 'b0437bb642a111e0bbb240403656340d', mainpage.id() )
         self.assertEqual( 'main-page', mainpage.slug() )
@@ -51,7 +103,7 @@ class TestAPIWiki( unittest.TestCase ):
         welcomepage = wiki.pages()[2]
         self.assertTrue( welcomepage )
         self.assertTrue( welcomepage.campaign() )
-        self.assertEqual( welcomepage.campaign().id(), oppyCmpnId)
+        self.assertEqual( welcomepage.campaign().id(), self.oppyCmpnId)
         self.assertEqual( 'Welcome', welcomepage.name() )
         self.assertEqual( 'b076352442a111e0bbb240403656340d', welcomepage.id() )
         self.assertEqual( 'welcome', welcomepage.slug() )

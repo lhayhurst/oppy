@@ -36,7 +36,25 @@ class WikiPage:
 
     def wiki_page_url(self):
         return self.page_data['wiki_page_url']
-        
+
+    def body(self):
+        return self.page_data['body']
+
+    def body_html(self):
+        return self.page_data['body_html']
+
+    def game_master_info(self):
+        return self.page_data['game_master_info']
+
+    def game_master_info_html(self):
+        return self.page_data['game_master_info_html']
+
+    def is_game_master_only(self):
+        return self.page_data['is_game_master_only']
+
+    def tags(self):
+        return self.page_data['tags']
+    
 
 
 class Character:
