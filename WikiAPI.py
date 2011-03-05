@@ -94,6 +94,7 @@ class TestAPIWiki( unittest.TestCase ):
         wiki = self.wiki.get( self.oppyCmpnId )
         self.assertTrue( wiki )
         self.assertEqual( 3, len( wiki.pages() ))
+        self.assertTrue( wiki.adventure_log() )
         homepage = wiki.pages()[0]
         self.assertTrue( homepage )
         self.homepage_basic_asserts(homepage)
@@ -113,15 +114,16 @@ class TestAPIWiki( unittest.TestCase ):
         self.assertEqual( 'main-page', mainpage.slug() )
         self.assertEqual( 'WikiPage', mainpage.page_type() )
         self.assertEqual( 'http://www.obsidianportal.com/campaigns/oppy/wiki_pages/main-page', mainpage.wiki_page_url() )
-        welcomepage = wiki.pages()[2]
-        self.assertTrue( welcomepage )
-        self.assertTrue( welcomepage.campaign() )
-        self.assertEqual( welcomepage.campaign().id(), self.oppyCmpnId)
-        self.assertEqual( 'Welcome', welcomepage.name() )
-        self.assertEqual( 'b076352442a111e0bbb240403656340d', welcomepage.id() )
-        self.assertEqual( 'welcome', welcomepage.slug() )
-        self.assertEqual( 'Post', welcomepage.page_type() )
-        self.assertEqual( 'http://www.obsidianportal.com/campaigns/oppy/wiki_pages/welcome', welcomepage.wiki_page_url() )
+        adventurelog = wiki.pages()[2]
+        self.assertTrue( adventurelog )
+        self.assertTrue( adventurelog.campaign() )
+        self.assertEqual( adventurelog.campaign().id(), self.oppyCmpnId)
+        self.assertEqual( 'Welcome', adventurelog.name() )
+        self.assertEqual( 'b076352442a111e0bbb240403656340d', adventurelog.id() )
+        self.assertEqual( 'welcome', adventurelog.slug() )
+        self.assertEqual( 'Post', adventurelog.page_type() )
+        self.assertEqual( 'http://www.obsidianportal.com/campaigns/oppy/wiki_pages/welcome', adventurelog.wiki_page_url() )
+        self.assertEqual( wiki.pages()[2], wiki.adventure_log())
 
 
 

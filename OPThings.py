@@ -10,6 +10,11 @@ class Wiki:
     def pages(self):
         return self.wiki_pages
 
+    def adventure_log(self):
+        for p in self.wiki_pages:
+            if p.page_type() == "Post":
+                return p
+
 class WikiPage:
 
     def __init__( self, dictionary = {} ):
