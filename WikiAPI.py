@@ -27,8 +27,13 @@ class WikiAPI:
         wikiPage = WikiPage( json.loads( content ))
         return wikiPage
 
-#    def show_by_slug(self, campaignID, slug ):
+    def show_by_slug(self, campaignID, slug ):
+        url = WikiAPI.requestUrl + campaignID + "/wikis/" + slug + ".json"
+        print url
+        content = self.connection.get( url, {'campaign_id' : campaignID, 'use_slug' : 1 } )
 
+        wikiPage = WikiPage( json.loads( content ))
+        return wikiPage
 
 class TestAPIWiki( unittest.TestCase ):
     def setUp( self ):
@@ -36,16 +41,23 @@ class TestAPIWiki( unittest.TestCase ):
         self.wiki = WikiAPI( self.config )
         self.oppyCmpnId = 'af7946b642a111e0bbb240403656340d'
         self.homepage_id = 'afa0074c42a111e0bbb240403656340d'
+        self.homepage_slug = 'home-page'
 
-    def homepage_asserts(self, homepage):
+    def test_show_page_by_slug(self):
+        homepage = self.wiki.show_by_slug( self.oppyCmpnId, self.homepage_slug )
+        self.assertTrue( homepage)
+        self.homepage_basic_asserts( homepage )
+        
+    def homepage_basic_asserts(self, homepage):
         self.assertTrue(homepage.campaign())
         self.assertTrue( type(homepage.campaign()).__name__ == 'instance' )
+        print homepage.campaign().campaign_url()
         self.assertEqual(homepage.campaign().id(), self.oppyCmpnId)
         self.assertEqual('Home Page', homepage.name())
         self.assertTrue( type(homepage.name()).__name__ == 'unicode' )
-        self.assertEqual(self.homepage_id, homepage.id())
+        self.assertEqual(self.homepage_id, homepage.id()) 
         self.assertTrue( type(homepage.id()).__name__ == 'unicode' )
-        self.assertEqual('home-page', homepage.slug())
+        self.assertEqual(self.homepage_slug, homepage.slug())
         self.assertTrue( type(homepage.slug()).__name__ == 'unicode' )
         self.assertEqual('WikiPage', homepage.page_type())
         self.assertTrue( type(homepage.page_type()).__name__ == 'unicode' )
@@ -61,10 +73,11 @@ class TestAPIWiki( unittest.TestCase ):
         self.assertEqual( "tags", homepage.tags()[2])
 
 
+
     def test_show_page(self ):
         homepage = self.wiki.show_page( self.oppyCmpnId, self.homepage_id )
         self.assertTrue( homepage )
-        self.homepage_asserts( homepage )
+        self.homepage_basic_asserts( homepage )
         #unlike fetching pages from the top level wiki, when you fetch them by individual page, you should get
         #real data back for body, body_html, game_master_info, game_master_info_html fields
         self.assertTrue( homepage.body )
@@ -83,7 +96,7 @@ class TestAPIWiki( unittest.TestCase ):
         self.assertEqual( 3, len( wiki.pages() ))
         homepage = wiki.pages()[0]
         self.assertTrue( homepage )
-        self.homepage_asserts(homepage)
+        self.homepage_basic_asserts(homepage)
         #when the page is fetched from the top level, "For bandwidth conservation, the data returned does not
         #include the the body, body_html, game_master_info, game_master_info_html fields
         self.assertIsNone( homepage.body())
