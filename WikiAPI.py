@@ -1,4 +1,5 @@
 import unittest
+from OPThings import Wiki
 from config import OpPyConfig
 import json
 from OPOAuthConnection import OPOAuthConnection
@@ -6,7 +7,7 @@ from OPOAuthConnection import OPOAuthConnection
 #from http://help.obsidianportal.com/kb/api/api-wiki-pages
 class WikiAPI:
 
-    requestUrl = 'http://api.obsidianportal.com/v1/campaigns'
+    requestUrl = 'http://api.obsidianportal.com/v1/campaigns/'
 
     #assumes the existence of a valid local configuration file
     def __init__(self, config):
@@ -27,7 +28,18 @@ class TestAPIWiki( unittest.TestCase ):
     def test_get(self):
         oppyCmpnId = 'af7946b642a111e0bbb240403656340d'
         wiki = self.wiki.get( oppyCmpnId )
-        assertTrue( wiki )
+        self.assertTrue( wiki )
+        self.assertEqual( 3, len( wiki.pages() ))
+        page0 = wiki.pages()[0]
+        self.assertTrue( page0 )
+        self.assertTrue( page0.campaign() )
+        self.assertEqual( page0.campaign().id(), oppyCmpnId)
+        self.assertEqual( 'Home Page', page0.name() )
+        self.assertEqual( 'afa0074c42a111e0bbb240403656340d', page0.id() )
+        self.assertEqual( 'home-page', page0.slug() )
+        self.assertEqual( 'WikiPage', page0.page_type() )
+        self.assertEqual( 'http://www.obsidianportal.com/campaigns/oppy/wiki_pages/home-page', page0.wiki_page_url() )
+
 
 
 

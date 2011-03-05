@@ -1,8 +1,43 @@
 
 class Wiki:
 
-    def __init__(self, dictionary = {} ):
-        self.campaign = Campaign( dictionary['campaign'])
+    def __init__(self, pages = [] ):
+        self.wiki_pages = []
+        for page in pages:
+            parsed_page = WikiPage( page )
+            self.wiki_pages.append( parsed_page )
+
+    def pages(self):
+        return self.wiki_pages
+
+class WikiPage:
+
+    def __init__( self, dictionary = {} ):
+        self.page_data = dictionary
+        self.camp = Campaign( dictionary['campaign'])
+
+    def campaign(self):
+        return self.camp
+
+    def name(self):
+        return self.page_data['name']
+
+    def id(self):
+        return self.page_data['id']
+
+    def id(self):
+        return self.page_data['id']
+
+    def slug(self):
+        return self.page_data['slug']
+
+    def page_type(self):
+        return self.page_data['type']
+
+    def wiki_page_url(self):
+        return self.page_data['wiki_page_url']
+        
+
 
 class Character:
 
